@@ -47,12 +47,12 @@ let s:last_words = ":"
 let s:save_cpo = &cpo
 set cpo&vim
 
-nnoremap <silent> %  :<C-U>call <SID>Match_wrapper('',1,'n') <CR>
-nnoremap <silent> g% :<C-U>call <SID>Match_wrapper('',0,'n') <CR>
-vnoremap <silent> %  :<C-U>call <SID>Match_wrapper('',1,'v') <CR>m'gv``
-vnoremap <silent> g% :<C-U>call <SID>Match_wrapper('',0,'v') <CR>m'gv``
-onoremap <silent> %  v:<C-U>call <SID>Match_wrapper('',1,'o') <CR>
-onoremap <silent> g% v:<C-U>call <SID>Match_wrapper('',0,'o') <CR>
+nnoremap <silent> %  :<C-U>call <SID>Match_wrapper2('',1,'n') <CR>
+nnoremap <silent> g% :<C-U>call <SID>Match_wrapper2('',0,'n') <CR>
+vnoremap <silent> %  :<C-U>call <SID>Match_wrapper2('',1,'v') <CR>m'gv``
+vnoremap <silent> g% :<C-U>call <SID>Match_wrapper2('',0,'v') <CR>m'gv``
+onoremap <silent> %  v:<C-U>call <SID>Match_wrapper2('',1,'o') <CR>
+onoremap <silent> g% v:<C-U>call <SID>Match_wrapper2('',0,'o') <CR>
 
 " Analogues of [{ and ]} using matching patterns:
 nnoremap <silent> [% :<C-U>call <SID>MultiMatch("bW", "n") <CR>
@@ -84,6 +84,15 @@ vmap a% <Esc>[%v]%
 
 let s:notslash = '\\\@<!\%(\\\\\)*'
 
+function! s:Match_wrapper2(word, forward, mode)
+  for _ in range(v:count1)
+    if _ != 0
+      execute "normal " . "hl"[forward]
+    endif
+    call s:Match_wrapper(a:word, a:forward, a:mode)
+  endfor
+endfun
+
 function! s:Match_wrapper(word, forward, mode) range
   " In s:CleanUp(), :execute "set" restore_options .
   let restore_options = (&ic ? " " : " no") . "ignorecase"
@@ -101,10 +110,10 @@ function! s:Match_wrapper(word, forward, mode) range
   let startline = line(".")
   let startcol = col(".")
   " Use default behavior if called with a count.
-  if v:count
-    exe "normal! " . v:count . "%"
-    return s:CleanUp(restore_options, a:mode, startline, startcol)
-  end
+  " if v:count
+  "   exe "normal! " . v:count . "%"
+  "   return s:CleanUp(restore_options, a:mode, startline, startcol)
+  " end
 
   " First step:  if not already done, set the script variables
   "   s:do_BR	flag for whether there are backrefs
