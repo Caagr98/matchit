@@ -87,7 +87,7 @@ let s:notslash = '\\\@<!\%(\\\\\)*'
 function! s:Match_wrapper2(word, forward, mode)
   for _ in range(v:count1)
     if _ != 0
-      execute "normal " . "hl"[forward]
+      execute "normal " . "hl"[a:forward]
     endif
     call s:Match_wrapper(a:word, a:forward, a:mode)
   endfor
